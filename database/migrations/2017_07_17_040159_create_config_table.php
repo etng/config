@@ -21,6 +21,7 @@ class CreateConfigTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('value');
+            $table->enum('data_type', ['text', 'int', 'float', 'lines', 'json', 'kvlines'])->default('text');
             $table->text('description')->nullable();
             $table->timestamps();
         });

@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ConfigModel extends Model
 {
+    public static $_data_types = [];
+    public static function getDataTypes(){
+        if(!self::$_data_types){
+            self::$_data_types = collect(['text', 'int', 'float', 'lines', 'json', 'kvlines'])->mapWithKeys(function($x){
+                return [$x => trans('config.data_type.' . $x)];
+            })->toArray();
+        }
+        return self::$_data_types;
+    }
     /**
      * Settings constructor.
      *

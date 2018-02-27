@@ -14,7 +14,22 @@ class Config extends Extension
      */
     public static function load()
     {
-        foreach (ConfigModel::all(['name', 'value']) as $config) {
+        foreach (ConfigModel::all(['name', 'value', 'data_type']) as $config) {
+            if($config['data_type']=='int'){
+                $config['value'] = intval($config['value']);
+            }elseif($config['data_type']=='float'){
+                $config['value'] = floatval($config['value']);
+            }elseif($config['data_type']=='json'){
+                $config['value'] = json_decode($config['value']);
+            }elseif($config['data_type']=='lines'){
+                $config['value'] = preg_split('!\r\n+!', $config['value'], 0, PREG_SPLIT_NO_EMPTY);
+            }
+            elseif($config['data_type']=='kvlines'){
+                $config['value'] = collect(preg_split('!\r\n+!', $config['value'], 0, PREG_SPLIT_NO_EMPTY))->mapWithKeys(function($x){
+                    list($k, $v) = explode(':', $x, 2);
+                    return [$k => $v];
+                })->toArray();
+            }
             config([$config['name'] => $config['value']]);
         }
     }

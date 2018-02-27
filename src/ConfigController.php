@@ -20,8 +20,8 @@ class ConfigController
     public function index()
     {
         return Admin::content(function (Content $content) {
-            $content->header('Config');
-            $content->description('Config list..');
+            $content->header(trans('config.admin.header'));
+            $content->description(trans('config.admin.description'));
 
             $content->body($this->grid());
         });
@@ -37,8 +37,8 @@ class ConfigController
     public function edit($id)
     {
         return Admin::content(function (Content $content) use ($id) {
-            $content->header('header');
-            $content->description('description');
+            $content->header(trans('config.admin.header'));
+            $content->description(trans('config.admin.description'));
 
             $content->body($this->form()->edit($id));
         });
@@ -52,8 +52,8 @@ class ConfigController
     public function create()
     {
         return Admin::content(function (Content $content) {
-            $content->header('header');
-            $content->description('description');
+            $content->header(trans('config.admin.header'));
+            $content->description(trans('config.admin.description'));
 
             $content->body($this->form());
         });
@@ -67,6 +67,10 @@ class ConfigController
                 return "<a tabindex=\"0\" class=\"btn btn-xs btn-twitter\" role=\"button\" data-toggle=\"popover\" data-html=true title=\"Usage\" data-content=\"<code>config('$name');</code>\">$name</a>";
             });
             $grid->value();
+            $data_types = ConfigModel::getDataTypes();
+            $grid->data_type()->display(function($data_type)use($data_types){
+                return @$data_types[$data_type];
+            });
             $grid->description();
 
             $grid->created_at();
@@ -85,6 +89,7 @@ class ConfigController
         return Admin::form(ConfigModel::class, function (Form $form) {
             $form->display('id', 'ID');
             $form->text('name')->rules('required');
+            $form->select('data_type')->options(ConfigModel::getDataTypes())->rules('required');
             $form->textarea('value')->rules('required');
             $form->textarea('description');
 
